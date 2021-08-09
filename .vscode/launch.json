@@ -1,0 +1,54 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch builder",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/builder/builder",
+            "args": ["simple_config.json","./"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/src/builder",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build"
+        }
+    ],
+    "inputs" : [
+        {
+            "type": "pickString",
+            "id": "uartPort",
+            "description": "What port should this application connect to?",
+            "options": [
+                "/dev/ttyUSB0",
+                "/dev/pts/2",
+                "/dev/pts/3",
+                "/dev/pts/4",
+                "/dev/pts/5"
+            ],
+            "default": "/dev/ttyUSB0"
+        },
+        {
+            "type": "pickString",
+            "id": "userverPort",
+            "description": "What port should this application connect to?",
+            "options": [
+                "/dev/ttyUSB",
+                "/dev/ttyA",
+            ],
+            "default": "/dev/ttyUSB"
+        }
+    ]
+
+}

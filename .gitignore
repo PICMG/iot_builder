@@ -1,0 +1,44 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.elf
+*.hex
+
+# other build-related files
+*.map
+test/pldm_server/pldm_server
+test/uart/uart_c_test
+test/pldm_cmd_test/pldm_cmd_test
+test/pldm_client/pldm_client
+test/pldm/pldm_test
+test/mctp/mctp_c_test
+test/discovery/discovery
