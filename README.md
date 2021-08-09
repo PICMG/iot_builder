@@ -2,37 +2,27 @@
 
 ## Overview
 
-This project implements example firmware that meets the requirements found in the PICMG(R) IoT.1 (IoT Firmware) specification. More information about PICMG IoT.1 can be found on the PICMG website (www.picmg.org).  The firmware is one of several references implementations provided by PICMG to demonstrate implementation of the IoT specifications.
+This project implements a tool that auto-generates (or builds) code to configure the IoT firmware build process.  The builder tool is not specified in the PICMG(R) IoT.1 (IoT Firmware) specification, however, it is an essential part of the PICMG reference implementation. More information about PICMG IoT.1 can be found on the PICMG website (www.picmg.org).  The builder is one of several reference implementations provided by PICMG to demonstrate implementation of the IoT specifications.
 
-The use case enabled by the PICMG firmware specification involves a user who wishes to create a smart sensor but does not nessarily have the proficiency to create firmware code. The user to creates a firmware configuration using a configurator tool.  The configurator tool, in turn, creates a configuration file that drives the rest of the firmware build process.  This use-case is shown in the following image.
+The use case enabled by the PICMG firmware specification involves a user who wishes to create a smart sensor but does not nessarily have the proficiency to create firmware code. The user to creates a firmware configuration using a configurator tool.  The configurator tool, in turn, creates a configuration file that drives the rest of the firmware build process.  The builder, a part of the PICMG "vendor-specific" reference code, converts the configurator output into a C header and soruce file that contans all the necessary macro definitions and data tables it implemnet the user's firmware configuration. This use-case is shown in the following image.
 
 <img align="center" src="./readme_images/UseCase.png" width=60% height=60%>
 
-**The PICMG Firmware specification does not dictate the target hardware, however, this code assumes a PICMG MicroSAM module based on the Atmega 328PB microcontroller.**
-
-The primary features of this firmware are:
-- Numeric and sensors/effecters with linearization
-- State sensors / effecters with possible OEM-defined state sets
-- Synchronization using global interlock and trigger signals
-- Profiled motion control with limit sensors and either S-curve or Trapezoidal motion profiles
-- Simple sensor / effecter readings and control
-- Fru data support
-- Device discovery through use of MCTP Discovery Notify message
-- Full PDLM communications stack over MCTP/Serial
+**The PICMG Firmware specification does not dictate the target hardware, however, the builder is intended to be used with the PICMG firmware for a PICMG MicroSAM module based on the Atmega 328PB microcontroller.**
 
 Other example code from PICMG can be found here:
 - https://github.com/PICMG/iot_configurator.git - example configurator that allows the user to create constraints-based device configurations for the firmware
-- https://github.com/PICMG/iot_builder - example code that converts configurator output (config.json) to C code that completes the firmware configuration for a Atmega 328PB-based firmware build.  This code can be adapted to other microcontrollers with minor modification.
-
+- https://github.com/PICMG/iot_firmware.git - example firmware implementation for the Atmega328PB.  This code instantiates many of the features described in the PICMG IoT.1 Firmware Specification.  Run-time features of the code are tuned through use of the configurator and builder tools.
+- 
 ## Build Tools
 
-The PICMG IoT firmware was developed using Visual Studio Code on Linux, and built using the GNU toolchain for avr microcontrollers.  The target hardware was assumed to be a PICMG MicroSam module based on the Atmega328PB microcontroller.  Alternately, an Arduino nano may be used for testing with reduced functionality.  Programming the firmware image onto the device will require the Avrdude utility.
+The PICMG IoT firmware was developed using Visual Studio Code on Linux, and built using the GNU toolchain.  
 
 ### Prerequisites:
 
 - Linux OS running Ubuntu 20.04.1 LTS (Focal Fossa).  Other versions of Linux may work but may also require other configuration steps.
 - Atmega 328PB-based MicroSAM module (or Arduino Nano for testing with reduced functionality)
-- PICMG IoT Builder (if new configurations are desired)
+- PICMG IoT Firmware (if testing is desired)
 - PICMG IoT Configurator (if new configurations are desired)
 
 ### Install Build Tools
@@ -43,7 +33,7 @@ Enter the following commands on your linux build system to load the required pac
 
 > sudo apt install g++
  
-> sudo apt-get install gcc-avr binutils-avr gdb-avr avr-libc avrdude
+> sudo apt-get install gcc
 
 ### Visual Studio Code setup (for Development)
 
@@ -58,13 +48,14 @@ Install the Linux GitHub package for Visual Studio Code
 
 ## Build Process
 
-The firmware currently supports two operating modes: profiled motion with a stepper controller, and a simple sensor with a single thermocouple device.  The reference configuration files for each of these can be found in the ./reference_configuration folder of this project. To build the configuration for the stepper configuration, change the working directory to ./avr/test/userver and invoke the following command:
+The project can be built and run directly from Visual Studio, or can be built from the command line by changing the working directory to /src/builder and invoking the following command.
 
-> make run_stepper
+> make
 
-This will build and attempt to load the resulting hex file onto your target hardware located at /dev/ttyUSB0.  If your target is located on another device, the location can easily changed by modifying the Makefile.
-To build the configuration for the simple sensor model, set your current working directory to ./avr/test/userver and invoke:
+## Running the Builder
 
->make run_simple
+Invoke the builder from the linux command line with the following command:
 
-This will build and attempt to load the resulting hex file onto your target hardware located at /dev/ttyUSB1
+> ./builder config_json_filename output_path
+
+
