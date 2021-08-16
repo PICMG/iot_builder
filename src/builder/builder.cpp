@@ -29,6 +29,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
+#include <algorithm>    // std:max
 #include "builder.h"
 #include "JsonFactory.h"
 #include "JsonObject.h"
@@ -1812,6 +1813,7 @@ void Builder::emitMacros()
                         return;
                     }
                     hOutputFile<<"extern LINTABLE_TYPE __lintable_"<<channel->getValue("name")<<"[] LINTABLE_DATA_ATTRIBUTES;"<<endl;
+                    hOutputFile<<"#define "<<bindingName+"_BOUNDCHANNEL_PRECISION "<<toUpper(channel->getValue("precision"))<<endl;
                 }
             }
             if ((binding->find("sensorID")!=NULL)&&(binding->getValue("sensorID")!="NULL")) 
@@ -1829,7 +1831,7 @@ void Builder::emitMacros()
             if ((binding->find("defaultState")!=NULL)&&(binding->getValue("defaultState")!="NULL")) 
                 hOutputFile<<"#define "<<bindingName+"_DEFAULTSTATE "<<toUpper(binding->getValue("defaultState"))<<endl;
             if (binding->getValue("bindingType") == "numericSensor") {
-                unsigned char enabledThresholds = 0;
+                unsigned char enabledThresholds = 0;                
                 if ((binding->find("normalMin")!=NULL)&&(binding->getValue("normalMin")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_NORMALMIN "<<toUpper(binding->getValue("normalMin"))<<endl;
                     enabledThresholds |= 0x4;
