@@ -42,8 +42,8 @@
 //   a new version of the string with whitespace removed from the end
 static string trimend(const string& str)
 {
-    unsigned long end = str.find_first_of(" \f\n\r\t\v");
-    return str.substr(0, end);
+    unsigned long end = str.find_last_not_of(" \f\n\r\t\v");
+    return str.substr(0, end+1);
 }
 
 //*******************************************************************

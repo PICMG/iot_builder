@@ -50,8 +50,6 @@ using namespace std;
 //
 int main(int argc, char *argv[]) {
     Builder builder;
-    cout<<"start"<<endl;
-
     if (argc != 3) {
         cerr << "Wrong number of arguments.  Syntax: " << endl;
         cerr << "   builder infile.json outfile.c" << endl;

@@ -1840,8 +1840,10 @@ void Builder::emitMacros()
                     hOutputFile<<"#define "<<bindingName+"_NORMALMAX "<<toUpper(binding->getValue("normalMax"))<<endl;
                     enabledThresholds |= 0x2;
                 } else hOutputFile<<"#define "<<bindingName+"_NORMALMAX "<<0<<endl;
-                if ((binding->find("upperThresholdWarning")!=NULL)&&(binding->getValue("upperThresholdWarning")!="NULL"))
+                if ((binding->find("upperThresholdWarning")!=NULL)&&(binding->getValue("upperThresholdWarning")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDWARNING "<<toUpper(binding->getValue("upperThresholdWarning"))<<endl;
+                    enabledThresholds |= 0x1;
+                } else hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDWARNING "<<0<<endl;
                 if ((binding->find("upperThresholdCritical")!=NULL)&&(binding->getValue("upperThresholdCritical")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDCRITICAL "<<toUpper(binding->getValue("upperThresholdCritical"))<<endl;
                     enabledThresholds |= 0x8;            
@@ -1850,11 +1852,13 @@ void Builder::emitMacros()
                     hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDFATAL "<<toUpper(binding->getValue("upperThresholdFatal"))<<endl;
                     enabledThresholds |= 0x20;
                 } else hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDFATAL "<<0<<endl;
-                if ((binding->find("lowerThresholdWarning")!=NULL)&&(binding->getValue("lowerThresholdWarning")!="NULL")) 
+                if ((binding->find("lowerThresholdWarning")!=NULL)&&(binding->getValue("lowerThresholdWarning")!="NULL")) { 
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDWARNING "<<toUpper(binding->getValue("lowerThresholdWarning"))<<endl;
+                    enabledThresholds |= 0x10;
+                } else hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDWARNING "<<0<<endl;
                 if ((binding->find("lowerThresholdCritical")!=NULL)&&(binding->getValue("lowerThresholdCritical")!="NULL")) { 
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDCRITICAL "<<toUpper(binding->getValue("lowerThresholdCritical"))<<endl;
-                    enabledThresholds |= 0x10;
+                    enabledThresholds |= 0x20;
                 } else hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDCRITICAL "<<0<<endl;
                 if ((binding->find("lowerThresholdFatal")!=NULL)&&(binding->getValue("lowerThresholdFatal")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDFATAL "<<toUpper(binding->getValue("lowerThresholdFatal"))<<endl;

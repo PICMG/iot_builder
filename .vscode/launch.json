@@ -5,6 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Real Test Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/builder/builder.exe",
+            "args": ["/Users/Doug/Documents/git/iot_configurator/configurator/configurations/calt_load_sensor_kg.json","./"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/src/builder",
+            "symbolSearchPath": "${workspaceFolder}/src/builder",
+            "environment": [],
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build"           
+        },
+        {
             "name": "(Windows) Launch",
             "type": "cppvsdbg",
             "request": "launch",
