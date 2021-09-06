@@ -854,7 +854,7 @@ bool Builder::emitNumericSensorPdr(JsonObject *binding, JsonObject *entity)
     emitStructUint8(0x00);                 // Sensor Init
     emitStructUint8(0x00);                 // Sensor Auxilary Names PDR
     emitStructUint8(binding->getInteger("physicalBaseUnit"));         // base unit
-    emitStructSint8(binding->getInteger("phsicalUnitModifier"));      // unitModifier
+    emitStructSint8(binding->getInteger("physicalUnitModifier"));      // unitModifier
     emitStructUint8(binding->getInteger("physicalRateUnit"));         // rateUnit
     emitStructUint8(0);                                               // base unit OEM Handle
     emitStructUint8(binding->getInteger("physicalAuxUnit"));          // aux unit
@@ -1252,7 +1252,7 @@ bool Builder::emitNumericEffecterPdr(JsonObject *binding, JsonObject *entity)
     emitStructUint8(0x00);                 // Effecter Init
     emitStructUint8(0x00);                 // Effecter AuxilaryNames PDR
     emitStructUint8(binding->getInteger("physicalBaseUnit"));         // base unit
-    emitStructSint8(binding->getInteger("phsicalUnitModifier"));      // unitModifier
+    emitStructSint8(binding->getInteger("physicalUnitModifier"));      // unitModifier
     emitStructUint8(binding->getInteger("physicalRateUnit"));         // rateUnit
     emitStructUint8(0x00);                                            // base oem unit handle
     emitStructUint8(binding->getInteger("physicalAuxUnit"));          // aux unit
@@ -1628,6 +1628,7 @@ void Builder::emitLinearizationTables()
                 unsigned int wordsOnLine = 0;
                 for (double x=-2*channelStep+channelMin; x<=channelMax+2*channelStep; x+=channelStep) {
                     // calculate the table value
+                    double current = seSpline.interpolate(x);
                     double y = gearing*responseSpline.interpolate(seSpline.interpolate(x));
                     y = y/resolution;
                     // saturate on overflow
