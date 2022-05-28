@@ -854,7 +854,7 @@ bool Builder::emitNumericSensorPdr(JsonObject *binding, JsonObject *entity)
     emitStructUint8(0x00);                 // Sensor Init
     emitStructUint8(0x00);                 // Sensor Auxilary Names PDR
     emitStructUint8(binding->getInteger("physicalBaseUnit"));         // base unit
-    emitStructSint8(binding->getInteger("physicalUnitModifier"));      // unitModifier
+    emitStructSint8(binding->getInteger("phsicalUnitModifier"));      // unitModifier
     emitStructUint8(binding->getInteger("physicalRateUnit"));         // rateUnit
     emitStructUint8(0);                                               // base unit OEM Handle
     emitStructUint8(binding->getInteger("physicalAuxUnit"));          // aux unit
@@ -1252,7 +1252,7 @@ bool Builder::emitNumericEffecterPdr(JsonObject *binding, JsonObject *entity)
     emitStructUint8(0x00);                 // Effecter Init
     emitStructUint8(0x00);                 // Effecter AuxilaryNames PDR
     emitStructUint8(binding->getInteger("physicalBaseUnit"));         // base unit
-    emitStructSint8(binding->getInteger("physicalUnitModifier"));      // unitModifier
+    emitStructSint8(binding->getInteger("phsicalUnitModifier"));      // unitModifier
     emitStructUint8(binding->getInteger("physicalRateUnit"));         // rateUnit
     emitStructUint8(0x00);                                            // base oem unit handle
     emitStructUint8(binding->getInteger("physicalAuxUnit"));          // aux unit
@@ -1628,15 +1628,16 @@ void Builder::emitLinearizationTables()
                 unsigned int wordsOnLine = 0;
                 for (double x=-2*channelStep+channelMin; x<=channelMax+2*channelStep; x+=channelStep) {
                     // calculate the table value
-                    double current = seSpline.interpolate(x);
-                    double y = gearing*responseSpline.interpolate(seSpline.interpolate(x));
+                    double part1 = seSpline.interpolate(x);     // from reading to edge of sensor/effecter circuitry
+                    double y = gearing*responseSpline.interpolate(part1);   // from sensor/effecter circuitry to physical quantity
                     y = y/resolution;
                     // saturate on overflow
                     if (y>0x7FFFFFFFL) y = 0x7FFFFFFF;
                     if (y<-0x7FFFFFFFL) y = -0x7FFFFFFF;
 
                     // output the table value to the c file
-                    cOutputFile<<"0x"<<hex<<setw(8)<<setfill('0')<<(unsigned int)(y+.5);
+                    long hexval = (long)(y+.5);
+                    cOutputFile<<"0x"<<hex<<setw(8)<<setfill('0')<<hexval;
                     
                     // if this was not the last table value, emit the separating comma
                     if (x<=channelMax+channelStep) cOutputFile<<", ";
@@ -1843,7 +1844,6 @@ void Builder::emitMacros()
                 } else hOutputFile<<"#define "<<bindingName+"_NORMALMAX "<<0<<endl;
                 if ((binding->find("upperThresholdWarning")!=NULL)&&(binding->getValue("upperThresholdWarning")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDWARNING "<<toUpper(binding->getValue("upperThresholdWarning"))<<endl;
-                    enabledThresholds |= 0x1;
                 } else hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDWARNING "<<0<<endl;
                 if ((binding->find("upperThresholdCritical")!=NULL)&&(binding->getValue("upperThresholdCritical")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDCRITICAL "<<toUpper(binding->getValue("upperThresholdCritical"))<<endl;
@@ -1853,13 +1853,12 @@ void Builder::emitMacros()
                     hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDFATAL "<<toUpper(binding->getValue("upperThresholdFatal"))<<endl;
                     enabledThresholds |= 0x20;
                 } else hOutputFile<<"#define "<<bindingName+"_UPPERTHRESHOLDFATAL "<<0<<endl;
-                if ((binding->find("lowerThresholdWarning")!=NULL)&&(binding->getValue("lowerThresholdWarning")!="NULL")) { 
+                if ((binding->find("lowerThresholdWarning")!=NULL)&&(binding->getValue("lowerThresholdWarning")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDWARNING "<<toUpper(binding->getValue("lowerThresholdWarning"))<<endl;
-                    enabledThresholds |= 0x10;
                 } else hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDWARNING "<<0<<endl;
                 if ((binding->find("lowerThresholdCritical")!=NULL)&&(binding->getValue("lowerThresholdCritical")!="NULL")) { 
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDCRITICAL "<<toUpper(binding->getValue("lowerThresholdCritical"))<<endl;
-                    enabledThresholds |= 0x20;
+                    enabledThresholds |= 0x10;
                 } else hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDCRITICAL "<<0<<endl;
                 if ((binding->find("lowerThresholdFatal")!=NULL)&&(binding->getValue("lowerThresholdFatal")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDFATAL "<<toUpper(binding->getValue("lowerThresholdFatal"))<<endl;

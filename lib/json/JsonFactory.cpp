@@ -183,10 +183,10 @@ JsonAbstractValue * JsonFactory::builder() {
     // here if the line is a value primitive
     if (str[strpos] == '"') {
         string s = getstring();
-        if (s == "") {
-            cerr<<"Null string returned"<<endl;
-            return NULL;
-        }
+        //if (s == "") {
+        //    cerr<<"Null string returned"<<endl;
+        //    return NULL;
+        //}
         JsonValue *cv = new JsonValue(s);
         skipWhitespace();
         return cv;

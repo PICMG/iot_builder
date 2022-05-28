@@ -56,5 +56,6 @@
         "termios.h": "c",
         "time.h": "c",
         "thread": "cpp"
-    }
+    },
+    "C_Cpp.default.cStandard": "c99"
 }
