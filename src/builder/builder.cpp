@@ -854,7 +854,7 @@ bool Builder::emitNumericSensorPdr(JsonObject *binding, JsonObject *entity)
     emitStructUint8(0x00);                 // Sensor Init
     emitStructUint8(0x00);                 // Sensor Auxilary Names PDR
     emitStructUint8(binding->getInteger("physicalBaseUnit"));         // base unit
-    emitStructSint8(binding->getInteger("phsicalUnitModifier"));      // unitModifier
+    emitStructSint8(binding->getInteger("physicalUnitModifier"));      // unitModifier
     emitStructUint8(binding->getInteger("physicalRateUnit"));         // rateUnit
     emitStructUint8(0);                                               // base unit OEM Handle
     emitStructUint8(binding->getInteger("physicalAuxUnit"));          // aux unit
@@ -1252,7 +1252,7 @@ bool Builder::emitNumericEffecterPdr(JsonObject *binding, JsonObject *entity)
     emitStructUint8(0x00);                 // Effecter Init
     emitStructUint8(0x00);                 // Effecter AuxilaryNames PDR
     emitStructUint8(binding->getInteger("physicalBaseUnit"));         // base unit
-    emitStructSint8(binding->getInteger("phsicalUnitModifier"));      // unitModifier
+    emitStructSint8(binding->getInteger("physicalUnitModifier"));      // unitModifier
     emitStructUint8(binding->getInteger("physicalRateUnit"));         // rateUnit
     emitStructUint8(0x00);                                            // base oem unit handle
     emitStructUint8(binding->getInteger("physicalAuxUnit"));          // aux unit
@@ -1858,7 +1858,7 @@ void Builder::emitMacros()
                 } else hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDWARNING "<<0<<endl;
                 if ((binding->find("lowerThresholdCritical")!=NULL)&&(binding->getValue("lowerThresholdCritical")!="NULL")) { 
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDCRITICAL "<<toUpper(binding->getValue("lowerThresholdCritical"))<<endl;
-                    enabledThresholds |= 0x10;
+                    enabledThresholds |= 0x20;
                 } else hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDCRITICAL "<<0<<endl;
                 if ((binding->find("lowerThresholdFatal")!=NULL)&&(binding->getValue("lowerThresholdFatal")!="NULL")) {
                     hOutputFile<<"#define "<<bindingName+"_LOWERTHRESHOLDFATAL "<<toUpper(binding->getValue("lowerThresholdFatal"))<<endl;
