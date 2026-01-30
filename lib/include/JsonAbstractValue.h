@@ -34,6 +34,7 @@ using namespace std;
 class JsonAbstractValue
 {
 public:
+    virtual ~JsonAbstractValue() = default;
     // deep copy of the value
     virtual JsonAbstractValue* copy() = 0;
 

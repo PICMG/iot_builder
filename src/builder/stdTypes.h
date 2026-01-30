@@ -223,9 +223,13 @@
 ///////// INCLUDES //////////////////////////////////////////////////////////////////////////////////////
 
 
-// standard 'C' libraries
+#// standard 'C' libraries
 #ifdef	TYPES_SUPPORTS_SIZED_INTEGERS
-#include <stdint.h>			// include the fixed-width integer types
+#  ifdef __cplusplus
+#    include <cstdint>   // C++ header for fixed-width integer types
+#  else
+#    include <stdint.h>  // C header for fixed-width integer types
+#  endif
 #endif
 #include <limits.h>			// include integer limits (ANSI)
 #include <float.h>			// include floating-point limits (ANSI)
@@ -244,7 +248,13 @@
 		// mnemonics for data types
 
 			// integer types
+/* Allow the build system or platform adapter to define
+	`TYPES_SUPPORTS_SIZED_INTEGERS`. Only define it here if
+	it hasn't already been provided to avoid redefinition warnings. */
+#ifndef TYPES_SUPPORTS_SIZED_INTEGERS
 #define TYPES_SUPPORTS_SIZED_INTEGERS
+#endif
+
 #if		!defined ( TYPES_SUPPORTS_SIZED_INTEGERS )
 			/*
 				The standard length-specific types are not available, so we replicate them.

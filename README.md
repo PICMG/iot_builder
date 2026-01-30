@@ -58,4 +58,27 @@ Invoke the builder from the linux command line with the following command:
 
 > ./builder config_json_filename output_path
 
+## CMake Build (alternate)
+
+You can build and run the `iot_builder` using CMake (out-of-tree host build). This is convenient for CI or when integrating the builder into a larger CMake project.
+
+1. Create a host build directory and configure:
+
+```bash
+mkdir -p build-host/iot_builder
+cmake -S tools/iot_builder -B build-host/iot_builder
+```
+
+2. Build the tool and run the generation target (this will also execute the tool to produce generated files):
+
+```bash
+cmake --build build-host/iot_builder --target build_and_run -- -j$(nproc)
+```
+
+3. Generated files will be written to `build-host/iot_builder/generated/` by default (`config.c`, `config.h`). To run the builder manually from the build directory use:
+
+```bash
+./build-host/iot_builder/iot_builder tools/iot_builder/src/builder/sample_config.json build-host/iot_builder/generated/
+```
+
 
