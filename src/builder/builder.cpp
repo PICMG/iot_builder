@@ -386,7 +386,7 @@ void Builder::emitTerminusLocatorPdr()
 // emit the Fru Record Set PDR to config.c.  This structure is
 // always the same, regardless of the rest of the PDR repository.
 //
-void Builder::emitFruRecordSetPdr()
+void Builder::emitFruRecordSetPdr(int identifier)
 {
     emitStructNewline();
     cOutputFile<<"   // FRU Record Set ";
@@ -399,7 +399,7 @@ void Builder::emitFruRecordSetPdr()
     emitStructUint16(0x0001);          // Record Change Number
     emitPdrSize(0x000a);               // data length
     emitStructUint16(0x0001);          // pldm terminus handle
-    emitStructUint16(1);               // FRU Record Set Identifier              
+    emitStructUint16(identifier);      // FRU Record Set Identifier              
     emitStructUint16(80);              // Container Entity Type - IO Module
     emitStructUint16(0x0001);          // Entity Instance Number
     emitStructUint16(0x0000);          // Container ID (System)
@@ -437,8 +437,9 @@ void Builder::emitFruRecords()
         emitStructNewline(true);
         cOutputFile<<"   // FRU Record "<<fruRecordCount<<endl;
 
-        // emit the fru record set identifier
-        emitStructUint16(0x0001, true);   
+        // emit the fru record set identifier - for these devices, there is only one record set
+        // all records belong to the same record set.
+        emitStructUint16(1, true);   
         
         // emit the fru record type
         if (record->getInteger("vendorIANA")==412) {
@@ -1636,8 +1637,8 @@ void Builder::emitLinearizationTables()
                     if (y<-0x7FFFFFFFL) y = -0x7FFFFFFF;
 
                     // output the table value to the c file
-                    long hexval = (long)(y+.5);
-                    cOutputFile<<"0x"<<hex<<setw(8)<<setfill('0')<<hexval;
+                    unsigned long hexval = static_cast<unsigned long>((long)(y+.5))&0xffffffff;
+                    cOutputFile<<"0x"<<hex<<setw(8)<<setfill('0')<<hexval<<dec;
                     
                     // if this was not the last table value, emit the separating comma
                     if (x<=channelMax+channelStep) cOutputFile<<", ";
@@ -1936,7 +1937,8 @@ bool Builder::build(string inputFilename, string outputPath) {
     emitTerminusLocatorPdr();
     JsonObject* cfgObj = (JsonObject*)(((JsonObject*)pdrjson)->find("configuration"));
     JsonArray* fruRecords = (JsonArray*)(cfgObj->find("fruRecords"));
-    for (int i=1;i<=fruRecords->size();i++) emitFruRecordSetPdr();
+    // for these devices, all records are part of the a single FRU Record Set
+    emitFruRecordSetPdr(1);
 
     //========================
     // Create Entity Associations

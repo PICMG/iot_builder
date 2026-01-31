@@ -72,7 +72,7 @@ class Builder {
         void emitPdrSize(unsigned int size);
         void endPdr();
         void emitTerminusLocatorPdr();
-        void emitFruRecordSetPdr();
+        void emitFruRecordSetPdr(int identifier);
         void emitEntityAssociationPdr();
         void emitOemEntityIdPdr();
         void emitOemStateSetPdrs();
