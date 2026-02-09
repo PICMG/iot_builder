@@ -726,7 +726,16 @@ bool Builder::emitStateSensorPdr(JsonObject *binding, JsonObject *entity)
         emitStructUint16(oemStateSetMap[key]);  // State Set ID
     }
     emitStructUint8(0x01); // Possible state size
-    emitStructUint8(binding->getInteger("usedStates"));
+    // allow either "usedStates" or "possibleStates" (or both) in the
+    // IOBinding; perform a logical OR if both are present.
+    unsigned int usedStatesVal = 0;
+    unsigned int possibleStatesVal = 0;
+    if ((binding->find("usedStates")!=NULL) && (binding->getValue("usedStates")!="NULL"))
+        usedStatesVal = binding->getInteger("usedStates");
+    if ((binding->find("possibleStates")!=NULL) && (binding->getValue("possibleStates")!="NULL"))
+        possibleStatesVal = binding->getInteger("possibleStates");
+    unsigned int combinedStates = (usedStatesVal | possibleStatesVal) & 0xff;
+    emitStructUint8((unsigned char)combinedStates);
     return true;
 }
 
@@ -1052,7 +1061,16 @@ bool Builder::emitStateEffecterPdr(JsonObject *binding, JsonObject *entity)
         emitStructUint16(oemStateSetMap[key]);  // State Set
     }
     emitStructUint8(0x01); // Possible state size
-    emitStructUint8(binding->getInteger("usedStates"));
+    // allow either "usedStates" or "possibleStates" (or both) in the
+    // IOBinding; perform a logical OR if both are present.
+    unsigned int usedStatesVal = 0;
+    unsigned int possibleStatesVal = 0;
+    if ((binding->find("usedStates")!=NULL) && (binding->getValue("usedStates")!="NULL"))
+        usedStatesVal = binding->getInteger("usedStates");
+    if ((binding->find("possibleStates")!=NULL) && (binding->getValue("possibleStates")!="NULL"))
+        possibleStatesVal = binding->getInteger("possibleStates");
+    unsigned int combinedStates = (usedStatesVal | possibleStatesVal) & 0xff;
+    emitStructUint8((unsigned char)combinedStates);
     return true;
 }
 
@@ -1825,8 +1843,18 @@ void Builder::emitMacros()
                 hOutputFile<<"#define "<<bindingName+"_EFFECTERID "<<toUpper(binding->getValue("effecterID"))<<endl;
             if ((binding->find("boundChannel")!=NULL)&&(binding->getValue("boundChannel")!="NULL")) 
                 hOutputFile<<"#define "<<bindingName+"_BOUNDCHANNEL "<<binding->getValue("boundChannel")<<endl;
-            if ((binding->find("usedStates")!=NULL)&&(binding->getValue("usedStates")!="NULL")) 
-                hOutputFile<<"#define "<<bindingName+"_USEDSTATES "<<toUpper(binding->getValue("usedStates"))<<endl;
+            // support either "usedStates" or "possibleStates" in the
+            // IOBinding. If both are present, emit the logical OR of the two.
+            {
+                unsigned int usedStatesVal = 0;
+                unsigned int possibleStatesVal = 0;
+                if ((binding->find("usedStates")!=NULL) && (binding->getValue("usedStates")!="NULL"))
+                    usedStatesVal = binding->getInteger("usedStates");
+                if ((binding->find("possibleStates")!=NULL) && (binding->getValue("possibleStates")!="NULL"))
+                    possibleStatesVal = binding->getInteger("possibleStates");
+                unsigned int combinedStates = (usedStatesVal | possibleStatesVal) & 0xff;
+                if (combinedStates) hOutputFile<<"#define "<<bindingName+"_USEDSTATES "<<combinedStates<<endl;
+            }
             if ((binding->find("stateWhenHigh")!=NULL)&&(binding->getValue("stateWhenHigh")!="NULL")) 
                 hOutputFile<<"#define "<<bindingName+"_STATEWHENHIGH "<<toUpper(binding->getValue("stateWhenHigh"))<<endl;
             if ((binding->find("stateWhenLow")!=NULL)&&(binding->getValue("stateWhenLow")!="NULL")) 
